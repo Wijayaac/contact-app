@@ -16,8 +16,7 @@ if (!fs.existsSync(filePath)) {
 
 const saveContact = (name, email, number) => {
   const contact = { name, email, number };
-  const file = fs.readFileSync("data/contacts.json", "utf-8");
-  const contacts = JSON.parse(file);
+  const contacts = loadContact();
 
   //   check name, if the name already registered don't add new contact
   const duplicate = contacts.find((contact) => contact.name === name);
@@ -56,4 +55,53 @@ const saveContact = (name, email, number) => {
   );
 };
 
-module.exports = { saveContact };
+const loadContact = () => {
+  const file = fs.readFileSync("data/contacts.json", "utf-8");
+  const contacts = JSON.parse(file);
+  return contacts;
+};
+
+// showing contact list
+const listContact = () => {
+  const contacts = loadContact();
+
+  console.log(chalk.cyan.inverse.italic.bold("Contact List : "));
+  contacts.forEach((contact, i) => {
+    console.log(`${i + 1}. ${contact.name} - ${contact.number}`);
+  });
+};
+
+// showing detail contact
+const detailContact = (name) => {
+  const contacts = loadContact();
+  const contact = contacts.find(
+    (contact) => contact.name.toLowerCase() === name.toLowerCase()
+  );
+  if (!contact) {
+    console.log(chalk.red.inverse.bold(`${name} not available`));
+    return false;
+  }
+
+  console.log(chalk.cyan.inverse.italic.bold(contact.name));
+  console.log(contact.number);
+  if (contact.email) {
+    console.log(contact.email);
+  }
+};
+
+// deleting contact
+const deleteContact = (name) => {
+  const contacts = loadContact();
+  const newContacts = contacts.filter(
+    (contact) => contact.name.toLowerCase() !== name.toLowerCase()
+  );
+  if (contacts.length === newContacts.length) {
+    console.log(chalk.red.inverse.bold(`${name} not available`));
+    return false;
+  }
+
+  fs.writeFileSync("data/contacts.json", JSON.stringify(newContacts));
+  console.log(chalk.green.inverse.italic.bold(`${name} successfully deleted`));
+};
+
+module.exports = { saveContact, listContact, detailContact, deleteContact };
