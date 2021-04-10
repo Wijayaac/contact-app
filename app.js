@@ -17,34 +17,22 @@ if (!fs.existsSync(filePath)) {
   fs.writeFileSync(filePath, "[]", "utf-8");
 }
 
-const askName = () => {
+// abstract method for creating template questions
+const askQuestions = (question) => {
   return new Promise((resolve, reject) => {
-    rl.question("Masukkan nama anda : ", (name) => {
-      resolve(name);
-    });
-  });
-};
-// const askNumber = () => {
-//   return new Promise((resolve, reject) => {
-//     rl.question("Masukkan nomor telepon anda : ", (number) => {
-//       resolve(number);
-//     });
-//   });
-// };
-const askEmail = () => {
-  return new Promise((resolve, reject) => {
-    rl.question("Masukkan email anda : ", (email) => {
-      resolve(email);
+    rl.question(question, (answer) => {
+      resolve(answer);
     });
   });
 };
 
+// main method for input data
 const main = async () => {
-  const name = await askName();
-  //   const number = await askNumber();
-  const email = await askEmail();
+  const name = await askQuestions("Masukkan nama anda : ");
+  const email = await askQuestions("Masukkan email anda : ");
+  const number = await askQuestions("Masukkan nomor anda : ");
 
-  const contact = { name, email };
+  const contact = { name, email, number };
   const file = fs.readFileSync("data/contacts.json", "utf-8");
   const contacts = JSON.parse(file);
 
@@ -55,16 +43,3 @@ const main = async () => {
 };
 
 main();
-// prompting input data using CLI
-// rl.question("Masukkan nama anda : ", (nama) => {
-//   rl.question("Masukkan nomor telepon : ", (nomor) => {
-//     const contact = { nama, nomor };
-//     const file = fs.readFileSync("data/contacts.json", "utf-8");
-//     const contacts = JSON.parse(file);
-
-//     contacts.push(contact);
-//     fs.writeFileSync("data/contacts.json", JSON.stringify(contacts));
-//     console.log("Terimakasih sudah memasukkan data");
-//     rl.close();
-//   });
-// });
