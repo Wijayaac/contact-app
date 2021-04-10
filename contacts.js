@@ -1,10 +1,7 @@
 const fs = require("fs");
-const { resolve } = require("path");
-const readline = require("readline");
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+const chalk = require("chalk");
+const validator = require("validator");
+
 // creating data folder
 const dirPath = "./data";
 if (!fs.existsSync(dirPath)) {
@@ -17,24 +14,44 @@ if (!fs.existsSync(filePath)) {
   fs.writeFileSync(filePath, "[]", "utf-8");
 }
 
-// abstract method for creating template questions
-const askQuestions = (question) => {
-  return new Promise((resolve, reject) => {
-    rl.question(question, (answer) => {
-      resolve(answer);
-    });
-  });
-};
-
 const saveContact = (name, email, number) => {
   const contact = { name, email, number };
   const file = fs.readFileSync("data/contacts.json", "utf-8");
   const contacts = JSON.parse(file);
 
+  //   check name, if the name already registered don't add new contact
+  const duplicate = contacts.find((contact) => contact.name === name);
+  if (duplicate) {
+    console.log(
+      chalk.red.inverse.bold(
+        "Contact already registered, hint: use another name!"
+      )
+    );
+    return false;
+  }
+
+  //   check email is  a valid mail
+  if (email) {
+    if (!validator.isEmail(email)) {
+      console.log(
+        chalk.red.inverse.bold("Email not valid, hint: use a valid email!")
+      );
+      return false;
+    }
+  }
+
+  //   check phone number, just ID number allowed
+  if (!validator.isMobilePhone(number)) {
+    console.log(
+      chalk.red.inverse.bold(
+        "Phone number is not valid, hint: use a valid ID mobile phone number!"
+      )
+    );
+    return false;
+  }
   contacts.push(contact);
   fs.writeFileSync("data/contacts.json", JSON.stringify(contacts));
   console.log("Terimakasih sudah memasukkan data");
-  rl.close();
 };
 
-module.exports = { askQuestions, saveContact };
+module.exports = { saveContact };

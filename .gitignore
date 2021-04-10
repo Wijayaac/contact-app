@@ -1,0 +1,6 @@
+# the package lock npm
+package-lock.json
+# node js modules
+node_modules/*
+# duplicate files
+*.txt
