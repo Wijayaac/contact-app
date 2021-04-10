@@ -41,7 +41,7 @@ const saveContact = (name, email, number) => {
   }
 
   //   check phone number, just ID number allowed
-  if (!validator.isMobilePhone(number)) {
+  if (!validator.isMobilePhone(number, "id-ID")) {
     console.log(
       chalk.red.inverse.bold(
         "Phone number is not valid, hint: use a valid ID mobile phone number!"
@@ -51,7 +51,9 @@ const saveContact = (name, email, number) => {
   }
   contacts.push(contact);
   fs.writeFileSync("data/contacts.json", JSON.stringify(contacts));
-  console.log("Terimakasih sudah memasukkan data");
+  console.log(
+    chalk.green.inverse.italic.bold("Terimakasih sudah memasukkan data")
+  );
 };
 
 module.exports = { saveContact };
