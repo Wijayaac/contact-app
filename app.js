@@ -1,38 +1,70 @@
 const fs = require("fs");
+const { resolve } = require("path");
 const readline = require("readline");
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
+// creating data folder
+const dirPath = "./data";
+if (!fs.existsSync(dirPath)) {
+  fs.mkdirSync(dirPath);
+}
 
-rl.question("Masukkan nama anda : ", (nama) => {
-  rl.question("Masukkan nomor telepon : ", (nomor) => {
-    const contact = { nama, nomor };
-    const file = fs.readFileSync("data/contacts.json", "utf-8");
-    const contacts = JSON.parse(file);
+// creating file contacts.json if not exists
+const filePath = "./data/contacts.json";
+if (!fs.existsSync(filePath)) {
+  fs.writeFileSync(filePath, "[]", "utf-8");
+}
 
-    contacts.push(contact);
-    fs.writeFileSync("data/contacts.json", JSON.stringify(contacts));
-    console.log("Terimakasih sudah memasukkan data");
-    rl.close();
+const askName = () => {
+  return new Promise((resolve, reject) => {
+    rl.question("Masukkan nama anda : ", (name) => {
+      resolve(name);
+    });
   });
-});
-// write string into a file using synchronous method
-// try {
-//   fs.writeFileSync("data/test.txt", "Wijaya - 089655771793");
-// } catch (error) {
-//   console.error(error);
-// }
+};
+// const askNumber = () => {
+//   return new Promise((resolve, reject) => {
+//     rl.question("Masukkan nomor telepon anda : ", (number) => {
+//       resolve(number);
+//     });
+//   });
+// };
+const askEmail = () => {
+  return new Promise((resolve, reject) => {
+    rl.question("Masukkan email anda : ", (email) => {
+      resolve(email);
+    });
+  });
+};
 
-// write string into a file using asynchcronous method
+const main = async () => {
+  const name = await askName();
+  //   const number = await askNumber();
+  const email = await askEmail();
 
-// fs.writeFile("data/test.txt", "089655771793 - Wijaya", (e) => {
-//   console.log(e);
-// });
+  const contact = { name, email };
+  const file = fs.readFileSync("data/contacts.json", "utf-8");
+  const contacts = JSON.parse(file);
 
-// read file content using synchronous method
-// const data = fs.readFileSync("data/test.txt", "utf-8");
-// fs.readFile("data/test.txt", "utf-8", (e, data) => {
-//   if (e) throw e;
-//   console.log(data);
+  contacts.push(contact);
+  fs.writeFileSync("data/contacts.json", JSON.stringify(contacts));
+  console.log("Terimakasih sudah memasukkan data");
+  rl.close();
+};
+
+main();
+// prompting input data using CLI
+// rl.question("Masukkan nama anda : ", (nama) => {
+//   rl.question("Masukkan nomor telepon : ", (nomor) => {
+//     const contact = { nama, nomor };
+//     const file = fs.readFileSync("data/contacts.json", "utf-8");
+//     const contacts = JSON.parse(file);
+
+//     contacts.push(contact);
+//     fs.writeFileSync("data/contacts.json", JSON.stringify(contacts));
+//     console.log("Terimakasih sudah memasukkan data");
+//     rl.close();
+//   });
 // });
